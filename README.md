@@ -1,66 +1,321 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# API de gestión de pedidos
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+API REST desarrollada con Laravel 10 para gestionar usuarios, productos y pedidos.
 
-## About Laravel
+La aplicación permite registrar e iniciar sesión con usuarios, crear pedidos con varios productos, consultar los pedidos del usuario autenticado y cancelar pedidos pendientes.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Tecnologías utilizadas
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+* PHP 8.2
+* Laravel 10
+* Laravel Sanctum
+* MySQL o MariaDB
+* PHPUnit
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Requisitos
 
-## Learning Laravel
+Antes de instalar el proyecto es necesario disponer de:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+* PHP 8.1 o superior
+* Composer
+* MySQL o MariaDB
+* Git
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Instalación
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Clonar el repositorio:
 
-## Laravel Sponsors
+```bash
+git clone https://github.com/ivanMR95/prueba-tecnica-pedidos.git
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Entrar en la carpeta del proyecto:
 
-### Premium Partners
+```bash
+cd prueba-tecnica-pedidos
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+Instalar las dependencias:
 
-## Contributing
+```bash
+composer install
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Crear el archivo de configuración del entorno.
 
-## Code of Conduct
+En Linux o macOS:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+cp .env.example .env
+```
 
-## Security Vulnerabilities
+En Windows:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+copy .env.example .env
+```
 
-## License
+Generar la clave de la aplicación:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan key:generate
+```
+
+## Configuración de la base de datos
+
+Crear una base de datos vacía y configurar las siguientes variables en el archivo `.env`:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=prueba_tecnica_pedidos
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Los valores deben modificarse según la configuración local de MySQL o MariaDB.
+
+Ejecutar las migraciones y cargar los productos de prueba:
+
+```bash
+php artisan migrate --seed
+```
+
+El seeder crea diez productos con diferentes precios y cantidades de stock.
+
+## Iniciar el servidor
+
+```bash
+php artisan serve
+```
+
+La API estará disponible en:
+
+```text
+http://127.0.0.1:8000
+```
+
+## Autenticación
+
+La API utiliza Laravel Sanctum.
+
+Los endpoints protegidos requieren enviar el token en la cabecera:
+
+```text
+Authorization: Bearer TOKEN
+```
+
+También se recomienda enviar las siguientes cabeceras:
+
+```text
+Accept: application/json
+Content-Type: application/json
+```
+
+## Endpoints
+
+### Registrar usuario
+
+```http
+POST /api/register
+```
+
+Ejemplo de petición:
+
+```json
+{
+    "name": "Ivan Martinez",
+    "email": "ivan@example.com",
+    "password": "password123",
+    "password_confirmation": "password123"
+}
+```
+
+La respuesta incluye el usuario registrado y un token de acceso.
+
+### Iniciar sesión
+
+```http
+POST /api/login
+```
+
+Ejemplo de petición:
+
+```json
+{
+    "email": "ivan@example.com",
+    "password": "password123"
+}
+```
+
+La respuesta incluye un nuevo token de acceso.
+
+### Crear un pedido
+
+```http
+POST /api/orders
+```
+
+Requiere autenticación.
+
+Ejemplo de petición:
+
+```json
+{
+    "items": [
+        {
+            "product_id": 1,
+            "quantity": 2
+        },
+        {
+            "product_id": 3,
+            "quantity": 1
+        }
+    ]
+}
+```
+
+Al crear el pedido:
+
+* Se comprueba que los productos existan.
+* Se valida que exista stock suficiente.
+* El precio unitario se copia desde el precio actual del producto.
+* El subtotal se calcula usando el precio y la cantidad.
+* El total del pedido se calcula desde sus líneas.
+* El stock de los productos se descuenta automáticamente.
+
+### Listar pedidos
+
+```http
+GET /api/orders
+```
+
+Requiere autenticación.
+
+Devuelve únicamente los pedidos pertenecientes al usuario autenticado.
+
+### Consultar un pedido
+
+```http
+GET /api/orders/{order}
+```
+
+Requiere autenticación.
+
+Devuelve el pedido junto con sus líneas y los productos relacionados.
+
+Un usuario no puede consultar pedidos pertenecientes a otro usuario.
+
+### Cancelar un pedido
+
+```http
+PUT /api/orders/{order}/cancel
+```
+
+Requiere autenticación.
+
+Solo se pueden cancelar pedidos con estado `pending`.
+
+Un pedido con estado `completed` o `cancelled` no puede volver a cancelarse.
+
+## Estados de un pedido
+
+Los pedidos pueden tener los siguientes estados:
+
+```text
+pending
+completed
+cancelled
+```
+
+Los pedidos nuevos se crean con estado `pending`.
+
+## Respuestas HTTP principales
+
+* `200 OK`: operación realizada correctamente.
+* `201 Created`: usuario o pedido creado correctamente.
+* `401 Unauthorized`: usuario no autenticado.
+* `403 Forbidden`: el usuario no es propietario del pedido.
+* `404 Not Found`: recurso no encontrado.
+* `422 Unprocessable Entity`: error de validación, stock insuficiente o estado no permitido.
+
+## Ejecución de tests
+
+Para ejecutar todos los tests:
+
+```bash
+php artisan test
+```
+
+Los tests incluidos comprueban:
+
+* Que un usuario autenticado puede crear un pedido.
+* Que el total del pedido se calcula correctamente.
+* Que los precios de los productos se copian a las líneas.
+* Que el stock se descuenta.
+* Que un usuario no puede consultar pedidos de otro usuario.
+
+## Decisiones técnicas
+
+### Transacciones
+
+La creación del pedido se realiza dentro de una transacción de base de datos.
+
+Si falla la creación de una línea o el descuento del stock, todos los cambios se revierten y no queda un pedido incompleto.
+
+### Bloqueo de productos
+
+Los productos se consultan utilizando `lockForUpdate()` durante la creación del pedido.
+
+Esto reduce el riesgo de que dos peticiones simultáneas utilicen el mismo stock disponible.
+
+### Observer
+
+Se utiliza un `OrderItemObserver` para recalcular el total del pedido cuando una línea se crea, modifica o elimina.
+
+El total no se recibe desde el cliente, sino que se obtiene sumando los subtotales de sus líneas.
+
+### Evento y listener
+
+Después de crear el pedido se dispara el evento `OrderCreated`.
+
+El listener `DecreaseProductStock` comprueba y descuenta el stock de los productos.
+
+El listener se ejecuta de forma síncrona para que cualquier error pueda provocar la reversión de la transacción.
+
+### Middleware
+
+El middleware `CheckOrderOwner` comprueba que el usuario autenticado sea el propietario del pedido antes de permitir consultar su detalle o cancelarlo.
+
+### Form Requests
+
+Las peticiones de registro, inicio de sesión y creación de pedidos utilizan Form Requests para separar las validaciones de los controladores.
+
+### API Resources
+
+Las respuestas de pedidos y líneas se generan mediante API Resources para controlar los datos expuestos por la API.
+
+### Eliminación de registros relacionados
+
+* Un usuario con pedidos asociados no puede eliminarse.
+* Al eliminar un pedido se eliminan sus líneas.
+* Un producto utilizado en un pedido no puede eliminarse.
+
+Estas restricciones permiten conservar el historial de los pedidos.
+
+## Datos de prueba
+
+Los productos pueden volver a cargarse ejecutando:
+
+```bash
+php artisan db:seed --class=ProductSeeder
+```
+
+Para reconstruir completamente la base de datos durante el desarrollo:
+
+```bash
+php artisan migrate:fresh --seed
+```
+
+Este último comando elimina todos los datos existentes antes de ejecutar nuevamente las migraciones y los seeders.
