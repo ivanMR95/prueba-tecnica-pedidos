@@ -57,7 +57,7 @@ class OrderService
 
             OrderCreated::dispatch($order);
 
-            return $order->load('items.product');
+            return $order->refresh()->load('items.product');
         });
     }
 }
