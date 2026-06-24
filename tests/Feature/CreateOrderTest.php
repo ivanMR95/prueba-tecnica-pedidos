@@ -77,4 +77,37 @@ class CreateOrderTest extends TestCase
             'stock' => 4,
         ]);
     }
+
+    public function test_order_is_not_created_when_stock_is_insufficient(): void
+    {
+        $user = User::factory()->create();
+
+        $product = Product::factory()->create([
+            'price' => 15.00,
+            'stock' => 2,
+        ]);
+
+        Sanctum::actingAs($user);
+
+        $response = $this->postJson('/api/orders', [
+            'items' => [
+                [
+                    'product_id' => $product->id,
+                    'quantity' => 3,
+                ],
+            ],
+        ]);
+
+        $response
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['items']);
+
+        $this->assertDatabaseCount('orders', 0);
+        $this->assertDatabaseCount('order_items', 0);
+
+        $this->assertDatabaseHas('products', [
+            'id' => $product->id,
+            'stock' => 2,
+        ]);
+    }
 }
